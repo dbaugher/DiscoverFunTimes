@@ -9,7 +9,7 @@
 # 
 # In this version, most of the background and detail have been removed. Please refer to the original at https://github.com/SALib/SATut if you are not familiar with the system.
 
-# In[1]:
+# In[2]:
 
 from ipywidgets import widgets, interact
 from IPython.display import display
@@ -25,7 +25,7 @@ sbn.set_context("talk", font_scale=1)
 from model import cost_of_vehicle_to_grid, compute_profit, annualized_capital_cost, battery_lifetime, max_vehicle_power
 
 
-# In[2]:
+# In[3]:
 
 # Uncomment and execute the following line to see the contents of the `model.py` file
 # %load model.py
@@ -44,7 +44,7 @@ from model import cost_of_vehicle_to_grid, compute_profit, annualized_capital_co
 
 # ### Import the package
 
-# In[3]:
+# In[4]:
 
 from SALib.sample import morris as ms
 from SALib.analyze import morris as ma
@@ -57,7 +57,7 @@ from SALib.plotting import morris as mp
 # 
 # In the script we run on Discovery, it's important that the names here match the parameter names to the function that we're evaluating, i.e. `max_vehicle_power()` in the `model.py` file.
 
-# In[4]:
+# In[5]:
 
 morris_problem = {
     # There are six variables
@@ -108,7 +108,7 @@ np.savetxt("parameter_values.txt", sample, header=header)
 # 
 # This is how many simulations we will need to run:
 
-# In[7]:
+# In[6]:
 
 len(sample)
 
@@ -117,7 +117,7 @@ len(sample)
 # 
 # First, some tips and tricks that will help you write your own `script.py` (or understand mine). Be sure you understand each of these cells in isolation before putting them together
 
-# In[15]:
+# In[7]:
 
 header = open("parameter_values.txt").readline() # open the file and read the first line
 print(header)
@@ -126,20 +126,20 @@ column_names = header.split() # split on whitespace, to get a list
 column_names
 
 
-# In[9]:
+# In[8]:
 
 big_parameter_list = np.loadtxt("parameter_values.txt")
 parameters = big_parameter_list[0]
 parameters
 
 
-# In[17]:
+# In[9]:
 
 arguments_dictionary = { key:value for key, value in zip(column_names, parameters)}
 arguments_dictionary
 
 
-# In[18]:
+# In[10]:
 
 max_vehicle_power(**arguments_dictionary)
 
@@ -198,7 +198,7 @@ for i in range(8):
 # 
 # Once your jobs have all finished, copy the `results.txt` back to your computer and put it alongside this Notebook. Hopefully we can import it like this:
 
-# In[ ]:
+# In[11]:
 
 np.loadtxt("results.txt")
 
@@ -291,7 +291,7 @@ for i in range(80):
 # Then come back here to load the results and continue the sensitivy analysis.
 # Because our results file may not be in order, but contains the job number at the start of each line, we need to do a little manipulation to get the `output` array as needed by SALib
 
-# In[19]:
+# In[12]:
 
 results_array = np.loadtxt("results.txt")
 print(results_array[:5,])
@@ -309,7 +309,7 @@ print(output[:5])
 #  when you generated the results.txt.
 # Because the sample is based on random numbers, it changes every time you run the notebook cell above  to generate it, and your results will be completely wrong if you use the wrong sample to analyze the output!
 
-# In[20]:
+# In[13]:
 
 sample = np.loadtxt("parameter_values.txt")
 sample
@@ -325,7 +325,7 @@ sample
 # * **Sigma** is the standard deviation of the mean effect.
 # * **Mu_star** is the mean absolute effect.
 
-# In[21]:
+# In[14]:
 
 Si = ma.analyze(morris_problem, sample, output, print_to_console=False)
 print("{:20s} {:>7s} {:>7s} {:>7s}".format("Name", "mu", "mu_star", "sigma"))
@@ -335,7 +335,7 @@ for name, s1, st, mean in zip(morris_problem['names'], Si['mu'], Si['mu_star'], 
 
 # We can plot the results
 
-# In[22]:
+# In[15]:
 
 fig, (ax1, ax2) = plt.subplots(1,2)
 mp.horizontal_bar_plot(ax1, Si, param_dict={})
@@ -345,7 +345,7 @@ mp.covariance_plot(ax2, Si, {})
 # ## Sanity check
 # Because this is such a trivially fast problem, we can do all 8000 simulations on laptop in a fraction of a second, so let's re-do it here in the notebook to compare with our results from above:
 
-# In[23]:
+# In[16]:
 
 def monte_carlo_large(data):
     y = max_vehicle_power(data[0], data[1], data[2], data[3], data[6], data[4], data[5])
@@ -359,11 +359,6 @@ for name, s1, st, mean in zip(morris_problem['names'], Si['mu'], Si['mu_star'], 
 fig, (ax1, ax2) = plt.subplots(1,2)
 mp.horizontal_bar_plot(ax1, Si, param_dict={})
 mp.covariance_plot(ax2, Si, {})
-
-
-# In[ ]:
-
-
 
 
 # In[ ]:
